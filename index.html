@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="reactionbg.css">
+    <script lang="JavaScript"> 
+        var startTime = new Date();
+        var endTime = new Date();
+        var startPressed = false;
+        var bgChangeStarted = false;
+        var maxWait = 15;
+        var timerID;
+        function startTest() {    //start background change
+            document.bgColor = document.response.bgColorChange.options[document.response.bgColorChange.selectedIndex].text;
+            bgChangeStarted = true;
+            startTime = new Date();
+        }
+        function remark(responseTime) {   //to alert the remark according to seconds
+            var responseString = "";
+            if (responseTime < 0.10)
+                responseString = "Well done!";
+            if (responseTime >= 0.10 && responseTime < 0.20)
+                responseString = "Nice!";
+            if (responseTime >= 0.20 && responseTime < 0.30)
+                responseString = "Could be better...";
+            if (responseTime >= 0.30 && responseTime < 0.60)
+                responseString = "Keep practicing!";
+            if (responseTime >= 0.60 && responseTime < 1)
+                responseString = "Have you been drinking?";
+            if (responseTime >= 1)
+                responseString = "Did you fall asleep?";
+            return responseString;
+        }
+        function stopTest() {   //to alert the response time in seconds 
+            if (bgChangeStarted) {
+                endTime = new Date();
+                var responseTime = (endTime.getTime() - startTime.getTime()) / 1000;
+                document.bgColor = "white";
+                alert("Your response time is: " + responseTime + " seconds " + "\n" + remark(responseTime));
+                startPressed = false;
+                bgChangeStarted = false;
+            }
+            else {
+                if (!startPressed) {
+                    alert("Press start first to start test");
+                }
+                else {
+                    clearTimeout(timerID);
+                    startPressed = false;
+                    alert("Cheater! You pressed too early!");
+                }
+            }
+        }
+        var randMULTIPLIER = 0x015a4e35;
+        var randINCREMENT = 1;
+        var today = new Date();
+        var randSeed = today.getSeconds();
+        function randNumber() {     //to generate random seconds 
+            randSeed = (randMULTIPLIER * randSeed + randINCREMENT) % (1 << 31);
+            return ((randSeed >> 15) & 0x7fff) / 32767;
+        }
+        function start() {   //function to trigger if start pressed twice
+            if (startPressed) {
+                alert("Already started. Press stop to stop");
+                return;
+            }
+            else {
+                startPressed = true;
+                timerID = setTimeout('startTest()', 20000 * randNumber());
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="content-wrap">
+        <form name="response">
+            <p class="p">Change Background color to:
+                <select style="font-family: 'Courier New', monospace;font-size: medium;
+          font-weight: bolder;" name="bgColorChange">
+                    <option selected style="font-weight: bolder;">deeppink</option>
+                    <option style="font-weight: bolder;">aliceblue</option>
+                    <option style="font-weight: bolder;">crimson</option>
+                    <option style="font-weight: bolder;">darkkhaki</option>
+                    <option style="font-weight: bolder;">cadetblue</option>
+                    <option style="font-weight: bolder;">darkorchid</option>
+                    <option style="font-weight: bolder;">coral</option>
+                    <option style="font-weight: bolder;">chocolate</option>
+                    <option style="font-weight: bolder;">mediumslateblue</option>
+                    <option style="font-weight: bolder;">tomato</option>
+                    <option style="font-weight: bolder;">darkslategray</option>
+                    <option style="font-weight: bolder;">limegreen</option>
+                    <option style="font-weight: bolder;">cornflowerblue</option>
+                    <option style="font-weight: bolder;">darkolivegreen</option>
+                </select><br>
+                <br>
+                <input type="button" class="btn" value="Start" onClick="start()">
+                <input type="button" class="btn" value="Stop" onClick="stopTest()">
+            </p>
+        </form>
+    </div>
+    <footer id="footer">
+        <p class="p">Press start to change the background.</p>
+        <p class="p">Once started, click the stop button to record your reaction time. Enjoy!</p>
+    </footer>
+</body>
+</html>
